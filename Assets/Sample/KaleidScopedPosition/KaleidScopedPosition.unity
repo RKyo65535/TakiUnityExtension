@@ -170,8 +170,8 @@ MonoBehaviour:
   - {fileID: 84524650}
   copySourceObject: {fileID: 5955294225065705610, guid: 3d5adca61b3334d488289f021495abe7, type: 3}
   lineObject: {fileID: 9220368885643808093, guid: 151bf014276bf6d408144e46050e571c, type: 3}
-  radius: 10
-  xRange: 12
+  radius: 12
+  xRange: 10
   yRange: 4
 --- !u!4 &754782654
 Transform:
