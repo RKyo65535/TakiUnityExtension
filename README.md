@@ -1,0 +1,8 @@
+# TakiUnityExtension
+私が便利と感じた機能を、どんどん追加していきます。
+コードの重要な部分はAssets/TakiExtension以下に、あります。
+実際の使用例はAssets/ExampleUsing以下にあります。
+
+#LICENSE
+特に記載のない限り、MITライセンスでライセンスされています。
+Assets/ExampleUsing以下のコード以外の素材については、素材元サイトの利用規約に従います。その際、素材と同じディレクトリのLICENSE.txtに利用規約のURLを配置しております。
