@@ -7,24 +7,22 @@ using UnityEngine;
 //まだ未検証です
 namespace Assets.TakiExtension.Singleton
 {
-    public abstract class BehaviourSingleton<T> : MonoBehaviour where T : MonoBehaviour
+    public abstract class MonoBehaviourSingleton<T> : MonoBehaviour where T : MonoBehaviour
     {
 
         private static T instance;
+
+        // staticなメソッドでは、当然自分自身を取得できない
+        // そのため、staticなUnityAPIでなるべく同等となる処理を試みている
+        // 具体的には、現在有効なオブジェクトのうち、今回ターゲットとするオブジェクトを対象としている。
         public static T Instance
         {
             get
             {
                 if (instance == null)
                 {
-
                     Type t = typeof(T);
-
                     instance = (T)FindObjectOfType(t);
-                    if (instance == null)
-                    {
-                        Debug.LogError(t + " をアタッチしているGameObjectはありません");
-                    }
                 }
 
                 return instance;
@@ -33,12 +31,14 @@ namespace Assets.TakiExtension.Singleton
 
         virtual protected void Awake()
         {
-
             if(instance == null)
             {
                 instance = GetComponent<T>();
-                DontDestroyOnLoad(this.gameObject);
-                LateAwake();
+                if (instance != null)
+                {
+                    DontDestroyOnLoad(gameObject);
+                    LateAwake();
+                }
             }
             else if (this == Instance)
             {
@@ -47,15 +47,8 @@ namespace Assets.TakiExtension.Singleton
             }
             else
             {
-                Debug.LogError(
-                    typeof(T) +
-                    " は既に他のGameObjectにアタッチされているため、コンポーネントを破棄しました." +
-                    " アタッチされているGameObjectは " + Instance.gameObject.name + " です.");
                 Destroy(this);
             }
-
-            // なんとかManager的なSceneを跨いでこのGameObjectを有効にしたい場合は
-            // ↓コメントアウト外してください.
         }
 
         protected abstract void LateAwake();
