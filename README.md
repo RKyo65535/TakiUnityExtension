@@ -10,4 +10,7 @@
 
 Assets/ExternalAssets ディレクトリ以下の素材については、素材元サイトの利用規約に従います。その際、素材と同じディレクトリのLICENSE.txtあるいはそれに相当するテキストファイルにライセンス、または利用規約のURLを配置しております。
 
+# UPM
+```https://github.com/RKyo65535/TakiUnityExtension.git?path=Assets/TakiExtensions```
 
+これでやってください
