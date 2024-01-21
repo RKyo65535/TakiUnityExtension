@@ -7,16 +7,16 @@ using UnityEngine;
 namespace TakiExtension.Save
 {
     /// <summary>
-    /// ���ۂɃZ�[�u�f�[�^���Ǘ�����N���X�ł��B
+    /// 実際にセーブデータを管理するクラスです。
     /// </summary>
     public class SaveDataManager
     {
-        //���s���萔
-        //�v���b�g�t�H�[�����ɕۑ��ꏊ��ς���
+        //実行時定数
+        //プラットフォーム毎に保存場所を変える
         private static readonly string SavePath = Application.persistentDataPath + "/";
 
-        //���Ȃǂ̃f�[�^�̓R���p�C�����萔�Ƃ��邱�ƂŁA���s���x���㏸��_���B
-        //�����͎蓮�œ��͂���K�v������B���ɂ���l����D���ɕς��Ă��������B
+        //鍵などのデータはコンパイル時定数とすることで、実行速度を上昇を狙う。
+        //ここは手動で入力する必要がある。既にある値から好きに変えてください。
         private const string DefaultAesKey32byte = @"11112222333344445555666677778888";
         private const string DefaultAesIV16byte = @"1111222233334444";
 
@@ -24,23 +24,23 @@ namespace TakiExtension.Save
         private const int BlockSize = 128;
 
         /// <summary>
-        /// Unity��JsonUtility�𗘗p���邱�ƂŁAJsonUtility���Ή������N���X��Json�`���ŕۑ����܂��B
-        /// �n�[�h�R�[�f�B���O���ꂽ���Ə������x�N�g�����g�p���܂��B�ۑ��ꏊ������ł��B
+        /// UnityのJsonUtilityを利用することで、JsonUtilityが対応したクラスをJson形式で保存します。
+        /// ハードコーディングされた鍵と初期化ベクトルを使用します。保存場所も既定です。
         /// </summary>
-        /// <typeparam name="ClassType">�Z�[�u����N���X�̌^�B���ׂẴ����o�ϐ��̓V���A���C�Y�\�ł���K�v������܂��B</typeparam>
-        /// <param name="instance">�Z�[�u����N���X�̃C���X�^���X�B</param>
-        /// <param name="fileName">�t�@�C�����B�p�X�͕K�v����܂���B</param>
+        /// <typeparam name="ClassType">セーブするクラスの型。すべてのメンバ変数はシリアライズ可能である必要があります。</typeparam>
+        /// <param name="instance">セーブするクラスのインスタンス。</param>
+        /// <param name="fileName">ファイル名。パスは必要ありません。</param>
         static public void SavePlayerData<ClassType>(ClassType instance, string fileName)
         {
             string path = SavePath + fileName;
             SavePlayerData(instance, path, DefaultAesIV16byte, DefaultAesKey32byte);
         }
         /// <summary>
-        /// �t�@�C����ǂݍ��݁AUnity��JsonUtility�𗘗p���邱�ƂŁA�w�肵���N���X�Ƀp�[�X���܂��B
+        /// ファイルを読み込み、UnityのJsonUtilityを利用することで、指定したクラスにパースします。
         /// </summary>
-        /// <typeparam name="ClassType">�Z�[�u����N���X�̌^�B���ׂẴ����o�ϐ��̓V���A���C�Y�\�ł���K�v������܂��B</typeparam>
-        /// <param name="fileName">�ǂݍ��ރt�@�C�����B�p�X�͕K�v����܂���B</param>
-        /// <returns>�p�[�X���ꂽ�C���X�^���X</returns>
+        /// <typeparam name="ClassType">セーブするクラスの型。すべてのメンバ変数はシリアライズ可能である必要があります。</typeparam>
+        /// <param name="fileName">読み込むファイル名。パスは必要ありません。</param>
+        /// <returns>パースされたインスタンス</returns>
         static public ClassType LoadPlayerData<ClassType>(string fileName)
         {
             string path = SavePath + fileName;
@@ -50,27 +50,27 @@ namespace TakiExtension.Save
 
 
         /// <summary>
-        /// Unity��JsonUtility�𗘗p���邱�ƂŁAJsonUtility���Ή������N���X��Json�`���ŕۑ����܂��B
+        /// UnityのJsonUtilityを利用することで、JsonUtilityが対応したクラスをJson形式で保存します。
         /// </summary>
-        /// <typeparam name="ClassType">�Z�[�u����N���X�̌^�B���ׂẴ����o�ϐ��̓V���A���C�Y�\�ł���K�v������܂��B</typeparam>
-        /// <param name="instance">�Z�[�u����N���X�̃C���X�^���X�B</param>
-        /// <param name="path">�Z�[�u����p�X�B�t�@�C���̖��O���܂ޕK�v������܂��B</param>
-        /// <param name="aesIV">AES�ɂ��Í����̏������x�N�g���B</param>
-        /// <param name="aesKey">AES�ɂ��Í����L�[�B</param>
+        /// <typeparam name="ClassType">セーブするクラスの型。すべてのメンバ変数はシリアライズ可能である必要があります。</typeparam>
+        /// <param name="instance">セーブするクラスのインスタンス。</param>
+        /// <param name="path">セーブするパス。ファイルの名前も含む必要があります。</param>
+        /// <param name="aesIV">AESによる暗号化の初期化ベクトル。</param>
+        /// <param name="aesKey">AESによる暗号化キー。</param>
         static public void SavePlayerData<ClassType>(ClassType instance, string path, string aesIV, string aesKey)
         {
-            //�����𖞂����Ȃ��Ȃ瑁�����^�[��
+            //条件を満たさないなら早期リターン
             if (!IsSatisfyStringLength(aesKey, aesIV))
             {
-                Debug.Log("�������G���[");
+                Debug.Log("初期化エラー");
                 return;
             }
 
-            //�Z�[�u�������N���X��Json�ɕϊ�
+            //セーブしたいクラスをJsonに変換
             string jsonData = JsonUtility.ToJson(instance);
-            //Json�e�L�X�g�f�[�^�̈Í���
+            //Jsonテキストデータの暗号化
             string cipher = Encrypt(jsonData, aesIV, aesKey);
-            //StreamWriter�ŏ�������
+            //StreamWriterで書き込む
             using (StreamWriter writer = new StreamWriter(path, false, Encoding.GetEncoding("utf-8")))
             {
                 writer.WriteLine(cipher);
@@ -78,60 +78,60 @@ namespace TakiExtension.Save
         }
 
         /// <summary>
-        /// �t�@�C����ǂݍ��݁AUnity��JsonUtility�𗘗p���邱�ƂŁA�w�肵���N���X�Ƀp�[�X���܂��B
+        /// ファイルを読み込み、UnityのJsonUtilityを利用することで、指定したクラスにパースします。
         /// </summary>
-        /// <typeparam name="ClassType">�Z�[�u����N���X�̌^�B���ׂẴ����o�ϐ��̓V���A���C�Y�\�ł���K�v������܂��B</typeparam>
-        /// <param name="path">�Z�[�u����p�X�B�t�@�C���̖��O���܂ޕK�v������܂��B</param>
-        /// <param name="aesIV">AES�ɂ��Í����̏������x�N�g���B</param>
-        /// <param name="aesKey">AES�ɂ��Í����L�[�B</param>
-        /// <returns>�p�[�X���ꂽ�C���X�^���X</returns>
+        /// <typeparam name="ClassType">セーブするクラスの型。すべてのメンバ変数はシリアライズ可能である必要があります。</typeparam>
+        /// <param name="path">セーブするパス。ファイルの名前も含む必要があります。</param>
+        /// <param name="aesIV">AESによる暗号化の初期化ベクトル。</param>
+        /// <param name="aesKey">AESによる暗号化キー。</param>
+        /// <returns>パースされたインスタンス</returns>
         static public ClassType LoadPlayerData<ClassType>(string path, string aesIV, string aesKey)
         {
-            //�t�@�C�������݂��Ȃ��Ȃ瑁�����^�[��
+            //ファイルが存在しないなら早期リターン
             if (!File.Exists(path))
             {
-                Debug.Log("�t�@�C���͑��݂��܂���");
+                Debug.Log("ファイルは存在しません");
                 return default;
             }
             if (!IsSatisfyStringLength(aesKey, aesIV))
             {
-                Debug.Log("�������G���[");
+                Debug.Log("初期化エラー");
                 return default;
             }
-            //�Í�����ǂݎ�������͂�ۑ�����ϐ�
+            //暗号文を読み取った文章を保存する変数
             string cipher;
-            //StreamReader�ňÍ����̓ǂݍ���
+            //StreamReaderで暗号文の読み込み
             using (StreamReader sr = new StreamReader(path, Encoding.GetEncoding("utf-8")))
             {
                 cipher = sr.ReadToEnd();
             }
-            //�������s���B
+            //復号を行う。
             string plain = Decrypt(cipher, aesIV, aesKey);
 
-            //���������f�[�^�̃p�[�X�����݂�B
+            //複合したデータのパースを試みる。
             ClassType plainedInstance = default;
             try
             {
-                plainedInstance = JsonUtility.FromJson<ClassType>(plain);//ref �����N���X�̃C���X�^���X�ɏ����i�[����
+                plainedInstance = JsonUtility.FromJson<ClassType>(plain);//ref したクラスのインスタンスに情報を格納する
             }
             catch
             {
-                Debug.Log("�Z�[�u�f�[�^�̃p�[�X�Ɏ��s���܂����B");
+                Debug.Log("セーブデータのパースに失敗しました。");
             }
 
-            //������ɂ��挋�ʂ����^�[������B
+            //いずれにせよ結果をリターンする。
             return plainedInstance;
         }
 
-        #region �ȉ��͔���J�̊֐��ł��B���̃N���X���g�����͓��Ɉӎ����Ȃ��Ă��ǂ��Ǝv���܂��B
+        #region 以下は非公開の関数です。このクラスを使う側は特に意識しなくても良いと思います。
 
         /// <summary>
-        /// AES���g���ĕ�������Í������܂�
+        /// AESを使って文字列を暗号化します
         /// </summary>
-        /// <param name="text">�Í������镶����</param>
-        /// <param name="iv">�������x�N�g��</param>
-        /// <param name="key">�Í����L�[</param>
-        /// <returns>�Í������ꂽ������</returns>
+        /// <param name="text">暗号化する文字列</param>
+        /// <param name="iv">初期化ベクトル</param>
+        /// <param name="key">暗号化キー</param>
+        /// <returns>暗号化された文字列</returns>
         static string Encrypt(string text, string iv, string key)
         {
 
@@ -156,12 +156,12 @@ namespace TakiExtension.Save
         }
 
         /// <summary>
-        /// AES���g���ĈÍ����𕜍����܂�
+        /// AESを使って暗号文を復号します
         /// </summary>
-        /// <param name="cipher">�Í������ꂽ������</param>
-        /// <param name="iv">�������x�N�g��</param>
-        /// <param name="key">�Í����L�[</param>
-        /// <returns>�������ꂽ������</returns>
+        /// <param name="cipher">暗号化された文字列</param>
+        /// <param name="iv">初期化ベクトル</param>
+        /// <param name="key">暗号化キー</param>
+        /// <returns>復号された文字列</returns>
         static string Decrypt(string cipher, string iv, string key)
         {
             using (AesManaged aes = CreateAESManager(key, iv))
@@ -184,10 +184,10 @@ namespace TakiExtension.Save
         }
 
         /// <summary>
-        /// AES�Ǘ��N���X���쐬����֐��B�K�v�ȏ��������܂Ƃ߂��B
+        /// AES管理クラスを作成する関数。必要な初期化をまとめた。
         /// </summary>
-        /// <param name="key">�Í����L�[</param>
-        /// <param name="iv">�������x�N�g��</param>
+        /// <param name="key">暗号化キー</param>
+        /// <param name="iv">初期化ベクトル</param>
         /// <returns></returns>
         static AesManaged CreateAESManager(string key, string iv)
         {
@@ -205,7 +205,7 @@ namespace TakiExtension.Save
         }
 
         /// <summary>
-        /// �L�[�⏉�����x�N�g���̃T�C�Y�������Ă��邩�m�F���܂��B
+        /// キーや初期化ベクトルのサイズが合っているか確認します。
         /// </summary>
         static bool IsSatisfyStringLength(string key, string iv)
         {
