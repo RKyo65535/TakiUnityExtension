@@ -1,94 +1,102 @@
-using TakiExtension;
+using TakiExtensions.TakiExtension.KaleidScopedPosition;
 using UnityEngine;
 
-public class Objectmanager : MonoBehaviour
+namespace TakiExtensions.ExampleUsing.KaleidScopedPosition
 {
-    //Å‰‚É”z’u‚³‚êA‘¼‚ÌƒIƒuƒWƒFƒNƒg‚ÌŒ³‚Æ‚à‚È‚éƒIƒuƒWƒFƒNƒg‚½‚¿
-    [SerializeField] CircleMove[] originalObjects;
-
-    //ƒRƒs[Œ³‚ÌƒIƒuƒWƒFƒNƒg
-    [SerializeField] GameObject copySourceObject;
-
-    [SerializeField] GameObject lineObject;
-
-    //‚¢‚Ü¢ŠE‚É‚ ‚éƒIƒuƒWƒFƒNƒg‚ÌTransform
-    Transform[,][] objects;
-
-    [SerializeField] float radius = 2;
-    [SerializeField] int xRange = 10;
-    [SerializeField] int yRange = 10;
-
-    // Start is called before the first frame update
-    void Start()
+    public class Objectmanager : MonoBehaviour
     {
+        //æœ€åˆã«é…ç½®ã•ã‚Œã€ä»–ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å…ƒã¨ã‚‚ãªã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŸã¡
+        [SerializeField] CircleMove[] originalObjects;
 
-        Transform thisTF = transform;
+        //ã‚³ãƒ”ãƒ¼å…ƒã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+        [SerializeField] GameObject copySourceObject;
 
-        objects = new Transform[xRange * 2 + 1, yRange * 2 + 1][];
-        for (int x = -xRange; x <= xRange; x++)
+        [SerializeField] GameObject lineObject;
+
+        //ã„ã¾ä¸–ç•Œã«ã‚ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®Transform
+        Transform[,][] objects;
+
+        [SerializeField] float radius = 2;
+        [SerializeField] int xRange = 10;
+        [SerializeField] int yRange = 10;
+
+        // Start is called before the first frame update
+        void Start()
         {
-            for (int y = -yRange; y <= yRange; y++)
-            {
 
-                Debug.Log("x="+x+",y="+y+"‚É‚¨‚¯‚éÀ•W‚Í" + Vector3.zero.GetKaleidScopedPosition(x, y, radius).ToString());
-                var obj = Instantiate(lineObject, Vector3.zero.GetKaleidScopedPosition(x, y,radius), Quaternion.identity);
-                if (Mathf.Abs(x + y) % 2 == 1)
-                {
-                    obj.transform.localScale = new Vector3(1, -1, 1); 
-                }
+            Transform thisTF = transform;
 
-                objects[x + xRange, y + yRange] = new Transform[originalObjects.Length];
-                for (int i = 0; i < objects[x + xRange, y + yRange].Length; i++)
-                {
-                    objects[x + xRange, y + yRange][i] = Instantiate(copySourceObject, thisTF).transform;
-                    objects[x + xRange, y + yRange][i].GetComponent<SpriteRenderer>().color =
-                        originalObjects[i].gameObject.GetComponent<SpriteRenderer>().color;
-                    objects[x + xRange, y + yRange][i].localScale = originalObjects[i].TF.localScale;
-
-                    objects[x + xRange, y + yRange][i].position = originalObjects[i].TF.position.GetKaleidScopedPosition(x, y, radius);
-                }
-            }
-        }
-
-
-
-    }
-
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-
-        foreach (CircleMove cm in originalObjects)
-        {
-            cm.Move();
-        }
-        for (int i = 0; i < objects[0, 0].Length; i++)
-        {
-            if (originalObjects[i].TF.position.IsInTriangle(radius))
-            {
-                originalObjects[i].gameObject.SetActive(true);
-            }
-            else
-            {
-                originalObjects[i].gameObject.SetActive(false);
-
-            }
-
+            objects = new Transform[xRange * 2 + 1, yRange * 2 + 1][];
             for (int x = -xRange; x <= xRange; x++)
             {
                 for (int y = -yRange; y <= yRange; y++)
                 {
-                    if (originalObjects[i].gameObject.activeSelf)
+
+                    Debug.Log("x=" + x + ",y=" + y + "ã«ãŠã‘ã‚‹åº§æ¨™ã¯" +
+                              Vector3.zero.GetKaleidScopedPosition(x, y, radius).ToString());
+                    var obj = Instantiate(lineObject, Vector3.zero.GetKaleidScopedPosition(x, y, radius),
+                        Quaternion.identity);
+                    if (Mathf.Abs(x + y) % 2 == 1)
                     {
-                        objects[x + xRange, y + yRange][i].gameObject.SetActive(true);
-                        objects[x + xRange, y + yRange][i].position = originalObjects[i].TF.position.GetKaleidScopedPosition(x, y, radius);
+                        obj.transform.localScale = new Vector3(1, -1, 1);
                     }
-                    else
+
+                    objects[x + xRange, y + yRange] = new Transform[originalObjects.Length];
+                    for (int i = 0; i < objects[x + xRange, y + yRange].Length; i++)
                     {
-                        objects[x + xRange, y + yRange][i].gameObject.SetActive(false);
+                        objects[x + xRange, y + yRange][i] = Instantiate(copySourceObject, thisTF).transform;
+                        objects[x + xRange, y + yRange][i].GetComponent<SpriteRenderer>().color =
+                            originalObjects[i].gameObject.GetComponent<SpriteRenderer>().color;
+                        objects[x + xRange, y + yRange][i].localScale = originalObjects[i].TF.localScale;
+
+                        objects[x + xRange, y + yRange][i].position =
+                            originalObjects[i].TF.position.GetKaleidScopedPosition(x, y, radius);
+                    }
+                }
+            }
+
+
+
+        }
+
+        // Update is called once per frame
+        void FixedUpdate()
+        {
+
+            foreach (CircleMove cm in originalObjects)
+            {
+                cm.Move();
+            }
+
+            for (int i = 0; i < objects[0, 0].Length; i++)
+            {
+                if (originalObjects[i].TF.position.IsInTriangle(radius))
+                {
+                    originalObjects[i].gameObject.SetActive(true);
+                }
+                else
+                {
+                    originalObjects[i].gameObject.SetActive(false);
+
+                }
+
+                for (int x = -xRange; x <= xRange; x++)
+                {
+                    for (int y = -yRange; y <= yRange; y++)
+                    {
+                        if (originalObjects[i].gameObject.activeSelf)
+                        {
+                            objects[x + xRange, y + yRange][i].gameObject.SetActive(true);
+                            objects[x + xRange, y + yRange][i].position =
+                                originalObjects[i].TF.position.GetKaleidScopedPosition(x, y, radius);
+                        }
+                        else
+                        {
+                            objects[x + xRange, y + yRange][i].gameObject.SetActive(false);
+
+                        }
 
                     }
-
                 }
             }
         }

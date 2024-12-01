@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 
 //まだ未検証です
-namespace Assets.TakiExtension.Singleton
+namespace TakiExtensions.TakiExtension.Singleton
 {
     public abstract class MonoBehaviourSingleton<T> : MonoBehaviour where T : MonoBehaviour
     {

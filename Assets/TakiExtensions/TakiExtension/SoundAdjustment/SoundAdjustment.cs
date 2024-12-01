@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
 
-namespace Assets.TakiExtension.SoundAdjustment
+namespace TakiExtensions.TakiExtension.SoundAdjustment
 {
     public class SoundAdjustment : MonoBehaviour
     {

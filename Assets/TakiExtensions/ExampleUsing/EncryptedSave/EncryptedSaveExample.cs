@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using UnityEngine;
-using TakiExtension.Save;
-using UnityEngine.UI;
+﻿using TakiExtensions.TakiExtension.EncryptedSave;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
-namespace Assets.ExampleUsing.EncryptedSave
+namespace TakiExtensions.ExampleUsing.EncryptedSave
 {
     public class EncryptedSaveExample : MonoBehaviour
     {

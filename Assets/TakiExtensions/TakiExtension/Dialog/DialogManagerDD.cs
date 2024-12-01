@@ -1,5 +1,5 @@
 using System;
-using Assets.TakiExtension.Singleton;
+using TakiExtensions.TakiExtension.Singleton;
 using UnityEngine;
 using UnityEngine.Serialization;
 

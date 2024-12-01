@@ -1,6 +1,6 @@
 ﻿using System.Collections;
+using TakiExtensions.TakiExtension.Singleton;
 using UnityEngine;
-using Assets.TakiExtension.Singleton;
 
 namespace Assets.ExampleUsing.Singleton
 {

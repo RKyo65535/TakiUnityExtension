@@ -1,10 +1,9 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
-namespace TakiExtension.Save
+namespace TakiExtensions.TakiExtension.EncryptedSave
 {
     /// <summary>
     /// 実際にセーブデータを管理するクラスです。
